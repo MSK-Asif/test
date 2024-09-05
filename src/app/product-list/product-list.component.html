@@ -1,0 +1,113 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Product List Header (Fixed) -->
+  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center my-4">
+    <div class="flex flex-row sm:items-center sm:ml-4">
+      <button (click)="toggleView()" class="hover:bg-teal-100 rounded p-2 items-center">
+        <img [src]="isGridView ? 'list.png' : 'grid.png'" alt="Toggle View" class="h-5 w-5">
+      </button>
+      <h2 class="text-xl sm:text-2xl font-medium text-teal-900 ml-1">Product List</h2>
+    </div>
+    <!-- Mobile View: Search Box and Add Product Button in the Same Row -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
+      <div class="flex flex-row space-x-4 items-center">
+        <input [(ngModel)]="searchTerm" (input)="searchProducts()" 
+               class="p-2 sm:p-3 h-8 sm:h-10 border border-teal-600 rounded focus:outline-none focus:ring-2 focus:ring-teal-500 w-full sm:w-auto" 
+               placeholder="Search products by name..." />
+        <button class="block sm:hidden h-8 sm:h-10 px-4 sm:px-6 bg-teal-900 hover:bg-teal-500 text-white rounded" (click)="openProductModal()">
+          <span class="text-xl">+</span>
+        </button>
+        <button class="hidden sm:block h-8 sm:h-10 px-4 sm:px-6 bg-teal-900 hover:bg-teal-500 text-white rounded" (click)="openProductModal()">Add Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Grid (Scrollable) -->
+  <div *ngIf="isGridView" class="overflow-y-auto h-[38rem] md:h-[30rem] lg:h-96">
+    <div *ngIf="filteredProducts.length === 0" class="text-center text-teal-900 font-medium">
+      <p>No products available.</p>
+    </div>
+    <div *ngIf="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div *ngFor="let product of filteredProducts" class="bg-white rounded-lg shadow overflow-hidden transform hover:-translate-y-1 hover:shadow-md transition-transform duration-300">
+        <div class="p-4">
+          <h3 class="text-lg font-bold text-teal-600 mb-4 truncate" title="{{ product.name }}">{{ product.name }}</h3>
+          <div class="space-y-2">
+            <div class="flex items-baseline">
+              <span class="w-20 font-semibold">Category</span>
+              <span class="ml-2 flex-1 truncate" title="{{ product.category }}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">: {{ product.category }}</span>
+            </div>
+            <div class="flex items-baseline">
+              <span class="w-20 font-semibold">Quantity</span>
+              <span class="ml-2">: {{ product.quantity }}</span>
+            </div>
+            <div class="flex items-baseline">
+              <span class="w-20 font-semibold">Unit Price</span>
+              <span class="ml-2">: {{ product.unitPrice | currency }}</span>
+            </div>
+            <div class="flex items-baseline">
+              <span class="w-20 font-semibold">Total</span>
+              <span class="ml-2">: {{ product.total | currency }}</span>
+            </div>
+            <div class="flex items-baseline">
+              <span class="w-20 font-semibold">Description</span>
+              <span class="ml-2 flex-1 truncate" title="{{ product.description }}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">: {{ product.description }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-between items-center bg-teal-50 p-2">
+          <button (click)="editProduct(product)" class="hover:bg-teal-100 text-teal-700 p-2 rounded-full transition-colors duration-300" title="Edit Product">
+            <img src="edit.png" class="h-5 w-5" alt="Edit">
+          </button>
+          <button (click)="deleteProduct(product.id)" class="hover:bg-teal-200 text-teal-700 p-2 rounded-full transition-colors duration-300" title="Delete Product">
+            <img src="delete.png" class="h-5 w-5" alt="Delete">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Table (Scrollable) -->
+  <div *ngIf="!isGridView" class="overflow-y-auto h-[38rem] md:h-[30rem] lg:h-96 rounded-lg">
+    <table class="min-w-full bg-white rounded-lg">
+      <!-- Table Header -->
+      <thead class="bg-teal-100 sticky top-0 z-0">
+        <tr class="text-teal-700">
+          <th class="text-left pl-2 sm:pl-4 py-2 text-sm sm:text-base">Product Name</th>
+          <th class="text-left p-2 text-sm sm:text-base">Category</th>
+          <th class="text-center p-2 text-sm sm:text-base">Quantity</th>
+          <th class="text-center p-2 text-sm sm:text-base">Unit Price</th>
+          <th class="text-center p-2 text-sm sm:text-base">Total</th>
+          <th class="text-center p-2 text-sm sm:text-base">Actions</th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody>
+        <tr *ngIf="filteredProducts.length === 0">
+          <td colspan="6" class="text-center text-teal-900 py-4">No products available.</td>
+        </tr>
+        <tr *ngFor="let product of filteredProducts" class="border-t hover:bg-teal-50">
+          <td class="pl-2 sm:pl-4 py-2 border-b border-teal-200 text-sm sm:text-base">{{ product.name }}</td>
+          <td class="p-2 border-b border-teal-200 text-sm sm:text-base">
+            <div class="truncate" title="{{ product.category }}" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              {{ product.category }}
+            </div>
+          </td>
+          <td class="p-2 text-center border-b border-teal-200 text-sm sm:text-base">{{ product.quantity }}</td>
+          <td class="p-2 text-center border-b border-teal-200 text-sm sm:text-base">{{ product.unitPrice }}</td>
+          <td class="p-2 text-center border-b border-teal-200 text-sm sm:text-base">{{ product.total }}</td>
+          <td class="p-2 text-center border-b border-teal-200">
+            <button (click)="editProduct(product)" class="hover:bg-teal-100 text-teal-700 px-3 py-1 rounded" title="Edit Product">
+              <img src="edit.png" class="h-5 w-5" alt="Edit">
+            </button>
+            <button (click)="deleteProduct(product.id)" class="hover:bg-teal-200 text-teal-700 px-3 py-1 rounded ml-2" title="Delete Product">
+              <img src="delete.png" class="h-5 w-5" alt="Delete">
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Ensure modal has a higher z-index -->
+  <app-product-modal (productAdded)="addProduct($event)" class="z-50"></app-product-modal>
+</div>

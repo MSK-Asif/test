@@ -1,0 +1,70 @@
+<div class="fixed inset-0 bg-teal-800 bg-opacity-15 flex items-center justify-center backdrop-blur-md" *ngIf="showModal">
+  <div class="bg-teal-50 p-4 rounded shadow-lg w-full max-w-2xl max-h-[90vh] overflow-auto">
+    <div class="flex flex-col items-center">
+      <!-- Custom Alert Section -->
+     <div *ngIf="showAlert" class="fixed top-1 left-1/2 transform -translate-x-1/2 w-80 bg-red-50 border border-red-300 text-red-800 rounded p-4 shadow-lg z-50">
+      <div class="flex items-center justify-between">
+        <span>{{ alertMessage }}</span>
+        <button (click)="showAlert = false" class="bg-red-500 text-white px-2 py-1 rounded">X</button>
+      </div>
+    </div>
+
+
+      <h2 class="text-2xl font-bold text-center text-teal-800">{{ modalTitle }}</h2>
+      <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="w-full">
+        <!-- Form Fields Here -->
+        <div class="mb-2">
+          <label class="block text-teal-700">Product Name <span class="text-red-500">*</span></label>
+          <input type="text" class="w-full p-1.5 border rounded border-teal-300 text-sm" [(ngModel)]="productName" name="productName" required />
+        </div>
+        <div class="mb-2">
+          <label class="block text-teal-700">Category</label>
+          <div class="relative">
+            <select
+              *ngIf="!showAddCategoryInput"
+              class="w-full p-1.5 border rounded border-teal-300 text-sm"
+              [(ngModel)]="selectedCategory"
+              name="category"
+              (change)="onCategoryChange($event)"
+              required
+            >
+              <option value="" disabled selected>Select a category</option>
+              <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+              <option value="add-new">Add New Category</option>
+            </select>
+            <input
+              *ngIf="showAddCategoryInput"
+              type="text"
+              class="w-full p-1.5 border rounded border-teal-300 text-sm mt-2"
+              [(ngModel)]="newCategory"
+              placeholder="Enter new category"
+              name="newCategory"
+            />
+          </div>
+        </div>
+        <div class="flex mb-2 space-x-4">
+          <div class="flex-1">
+            <label class="block text-teal-700">Quantity <span class="text-red-500">*</span></label>
+            <input type="number" class="w-full p-1.5 border rounded border-teal-300 text-sm" [(ngModel)]="quantity" name="quantity" required />
+          </div>
+          <div class="flex-1">
+            <label class="block text-teal-700">Unit Price <span class="text-red-500">*</span></label>
+            <input type="number" class="w-full p-1.5 border rounded border-teal-300 text-sm" [(ngModel)]="unitPrice" name="unitPrice" required />
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="block text-teal-700">Description <span class="text-red-500">*</span></label>
+          <textarea class="w-full p-1.5 border rounded border-teal-300 text-sm" [(ngModel)]="description" name="description" rows="4"></textarea>
+        </div>
+        <div class="mb-2">
+          <label class="block text-teal-700">Create Date</label>
+          <input type="date" class="w-full p-1.5 border rounded border-teal-300 text-sm" [(ngModel)]="createDate" name="createDate" required />
+        </div>
+        <div class="flex justify-end">
+          <button type="button" class="bg-teal-500 hover:bg-teal-300 text-white px-4 py-1 rounded mr-2" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="bg-teal-900 hover:bg-teal-600 text-white px-6 py-1 rounded">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
